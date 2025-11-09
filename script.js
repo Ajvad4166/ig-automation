@@ -109,6 +109,8 @@ document.getElementById('start-automation').addEventListener('click', () => {
                 log.innerHTML += `<p>User followed! Sending custom message: "${reel.message}"</p>`;
                 stats.messagesSent++;
                 stats.followsGained++;
+                log.innerHTML += `<p>Replying to comment: "check your DM"</p>`;
+                stats.messagesSent++; // Count the reply as a message
                 reel.status = 'completed';
             } else {
                 log.innerHTML += `<p>User did not follow. Retrying...</p>`;
