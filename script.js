@@ -13,7 +13,7 @@ let stats = {
 };
 
 // API Base URL (change to your deployed backend URL)
-const API_BASE = 'http://localhost:3000/api';
+const API_BASE = 'https://igautomation4166.netlify.app/api';
 
 // Instagram API integration
 async function fetchInstagramData(endpoint) {
