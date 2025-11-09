@@ -12,6 +12,42 @@ let stats = {
     followsGained: 0
 };
 
+// API Base URL (change to your deployed backend URL)
+const API_BASE = 'http://localhost:3000/api';
+
+// Instagram API integration
+async function fetchInstagramData(endpoint) {
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`);
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        return null;
+    }
+}
+
+async function postInstagramData(endpoint, data) {
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        return null;
+    }
+}
+
 // Navigation
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -170,6 +206,26 @@ function drawChart() {
         ctx.fillText(value.toString(), x, startY - height - 10);
     });
 }
+
+// Load Instagram Data
+document.getElementById('load-instagram-data').addEventListener('click', async () => {
+    const button = document.getElementById('load-instagram-data');
+    button.textContent = 'Loading...';
+    button.disabled = true;
+
+    const userData = await fetchInstagramData('/instagram/user');
+    if (userData) {
+        document.getElementById('ig-username').textContent = userData.username || 'N/A';
+        document.getElementById('ig-account-type').textContent = userData.account_type || 'N/A';
+        document.getElementById('ig-media-count').textContent = userData.media_count || '0';
+        document.getElementById('instagram-info').style.display = 'block';
+    } else {
+        alert('Failed to load Instagram data. Please check your access token.');
+    }
+
+    button.textContent = 'Load Instagram Data';
+    button.disabled = false;
+});
 
 document.getElementById('analytics-btn').addEventListener('click', drawChart);
 
