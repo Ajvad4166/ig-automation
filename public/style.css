@@ -11,6 +11,7 @@ header {
     color: white;
     padding: 1rem;
     text-align: center;
+    position: relative;
 }
 
 header h1 {
@@ -139,4 +140,30 @@ li {
 #analytics-chart {
     max-width: 100%;
     height: 400px;
+}
+
+.connect-btn {
+    background-color: #e4405f;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.connect-btn:hover {
+    background-color: #d6336c;
+}
+
+#account-info {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+#user-info {
+    color: white;
+    font-size: 0.9rem;
 }

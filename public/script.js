@@ -48,6 +48,19 @@ async function postInstagramData(endpoint, data) {
     }
 }
 
+// Instagram Connection
+document.getElementById('connect-instagram').addEventListener('click', () => {
+    window.location.href = '/auth/instagram';
+});
+
+// Check if connected
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('connected') === 'true') {
+    document.getElementById('connect-instagram').style.display = 'none';
+    document.getElementById('user-info').style.display = 'block';
+    loadInstagramData();
+}
+
 // Navigation
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -208,20 +221,26 @@ function drawChart() {
 }
 
 // Load Instagram Data
-document.getElementById('load-instagram-data').addEventListener('click', async () => {
-    const button = document.getElementById('load-instagram-data');
-    button.textContent = 'Loading...';
-    button.disabled = true;
-
+async function loadInstagramData() {
     const userData = await fetchInstagramData('/instagram/user');
     if (userData) {
+        document.getElementById('username').textContent = userData.username || 'N/A';
+        document.getElementById('account-type').textContent = `(${userData.account_type || 'N/A'})`;
         document.getElementById('ig-username').textContent = userData.username || 'N/A';
         document.getElementById('ig-account-type').textContent = userData.account_type || 'N/A';
         document.getElementById('ig-media-count').textContent = userData.media_count || '0';
         document.getElementById('instagram-info').style.display = 'block';
     } else {
-        alert('Failed to load Instagram data. Please check your access token.');
+        alert('Failed to load Instagram data. Please check your connection.');
     }
+}
+
+document.getElementById('load-instagram-data').addEventListener('click', async () => {
+    const button = document.getElementById('load-instagram-data');
+    button.textContent = 'Loading...';
+    button.disabled = true;
+
+    await loadInstagramData();
 
     button.textContent = 'Load Instagram Data';
     button.disabled = false;

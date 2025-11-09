@@ -13,9 +13,49 @@ app.use(express.static('public')); // Serve frontend files
 
 // Instagram Graph API base URL
 const INSTAGRAM_API_BASE = 'https://graph.instagram.com';
+const INSTAGRAM_OAUTH_BASE = 'https://api.instagram.com/oauth';
+
+// Instagram App credentials (user needs to add their own)
+const CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID || 'YOUR_CLIENT_ID_HERE';
+const CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET || 'YOUR_CLIENT_SECRET_HERE';
+const REDIRECT_URI = process.env.REDIRECT_URI || 'http://localhost:3000/auth/instagram/callback';
 
 // Placeholder for Instagram access token - user needs to add their own
 const ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN || 'YOUR_ACCESS_TOKEN_HERE';
+
+// OAuth Routes
+app.get('/auth/instagram', (req, res) => {
+    const authUrl = `${INSTAGRAM_OAUTH_BASE}/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=user_profile,user_media&response_type=code`;
+    res.redirect(authUrl);
+});
+
+app.get('/auth/instagram/callback', async (req, res) => {
+    const { code } = req.query;
+    if (!code) {
+        return res.status(400).json({ error: 'Authorization code not provided' });
+    }
+
+    try {
+        const tokenResponse = await axios.post(`${INSTAGRAM_OAUTH_BASE}/access_token`, {
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            grant_type: 'authorization_code',
+            redirect_uri: REDIRECT_URI,
+            code: code
+        });
+
+        const { access_token, user_id } = tokenResponse.data;
+
+        // Store the access token (in production, use a database)
+        process.env.INSTAGRAM_ACCESS_TOKEN = access_token;
+
+        // Redirect back to frontend with success
+        res.redirect('/?connected=true');
+    } catch (error) {
+        console.error('Error exchanging code for token:', error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to authenticate' });
+    }
+});
 
 // Routes
 
