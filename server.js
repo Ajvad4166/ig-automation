@@ -175,7 +175,5 @@ app.post('/api/automation/start', (req, res) => {
     res.json({ success: true, results });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Export for Vercel
+module.exports = app;
