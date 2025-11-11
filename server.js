@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public')); // Serve frontend files
+app.use(express.static('./')); // Serve frontend files
 
 // Instagram Graph API base URL
 const INSTAGRAM_API_BASE = 'https://graph.instagram.com';
