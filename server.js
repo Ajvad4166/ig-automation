@@ -24,7 +24,7 @@ const INSTAGRAM_OAUTH_BASE = 'https://api.instagram.com/oauth';
 // Instagram App credentials (user needs to add their own)
 const CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID || 'YOUR_CLIENT_ID_HERE';
 const CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET || 'YOUR_CLIENT_SECRET_HERE';
-const REDIRECT_URI = process.env.REDIRECT_URI || 'https://ig-automation-agf5582tr-ajvad-cheniyaths-projects.vercel.app/auth/instagram/callback';
+const REDIRECT_URI = process.env.REDIRECT_URI || 'https://ig-automation-chi.vercel.app/auth/instagram/callback';
 
 // Placeholder for Instagram access token - user needs to add their own
 const ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN || 'YOUR_ACCESS_TOKEN_HERE';
