@@ -29,6 +29,9 @@ const REDIRECT_URI = process.env.REDIRECT_URI || 'https://ig-automation-chi.verc
 // Placeholder for Instagram access token - user needs to add their own
 const ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN || 'YOUR_ACCESS_TOKEN_HERE';
 
+// Check if access token is configured
+const isTokenConfigured = ACCESS_TOKEN && ACCESS_TOKEN !== 'YOUR_ACCESS_TOKEN_HERE';
+
 // OAuth Routes
 app.get('/auth/instagram', (req, res) => {
     const authUrl = `${INSTAGRAM_OAUTH_BASE}/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=user_profile,user_media&response_type=code`;
@@ -67,6 +70,13 @@ app.get('/auth/instagram/callback', async (req, res) => {
 
 // Get user profile info
 app.get('/api/instagram/user', async (req, res) => {
+    if (!isTokenConfigured) {
+        return res.status(400).json({
+            error: 'Instagram API not configured',
+            details: 'Please set up your Instagram access token in the environment variables'
+        });
+    }
+
     try {
         const response = await axios.get(`${INSTAGRAM_API_BASE}/me`, {
             params: {
@@ -76,6 +86,7 @@ app.get('/api/instagram/user', async (req, res) => {
         });
         res.json(response.data);
     } catch (error) {
+        console.error('Instagram API Error:', error.response?.data || error.message);
         res.status(500).json({ error: 'Failed to fetch user data', details: error.message });
     }
 });
