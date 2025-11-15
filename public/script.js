@@ -62,12 +62,17 @@ if (urlParams.get('connected') === 'true') {
 }
 
 // Navigation
-document.querySelectorAll('.nav-btn').forEach(btn => {
+document.querySelectorAll('.nav-item').forEach(btn => {
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById(btn.id.replace('-btn', '')).classList.add('active');
+        const sectionId = btn.id.replace('-btn', '');
+        document.getElementById(sectionId).classList.add('active');
+        // Draw chart if analytics section is activated
+        if (sectionId === 'analytics') {
+            drawChart();
+        }
     });
 });
 
@@ -197,26 +202,48 @@ function updateStats() {
 function drawChart() {
     const canvas = document.getElementById('analytics-chart');
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
+    // Set canvas size for crisp rendering
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    ctx.clearRect(0, 0, rect.width, rect.height);
+
+    // Set font for clear, crisp text
+    ctx.font = 'bold 18px Arial';
+    ctx.fillStyle = '#333';
+    ctx.textAlign = 'center';
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 3;
+
     // Simple bar chart
     const data = [stats.totalReels, stats.messagesSent, stats.followsGained];
-    const labels = ['Total Reels', 'Messages Sent', 'Follows Gained'];
+    const labels = ['Reels', 'Messages', 'Follows'];
     const colors = ['#e4405f', '#f77737', '#fcaf45'];
-    
-    const barWidth = 50;
-    const barSpacing = 20;
-    const startX = 50;
-    const startY = canvas.height - 50;
-    
+
+    const barWidth = 80;
+    const barSpacing = 60;
+    const startX = 100;
+    const startY = rect.height - 80;
+    const maxHeight = rect.height - 160;
+
     data.forEach((value, index) => {
-        const x = startX + index * (barWidth + barSpacing);
-        const height = (value / Math.max(...data)) * (canvas.height - 100);
+        const x = startX + index * (barWidth + barSpacing) + barWidth / 2;
+        const height = value > 0 ? (value / Math.max(...data)) * maxHeight : 5; // Minimum height for visibility
         ctx.fillStyle = colors[index];
-        ctx.fillRect(x, startY - height, barWidth, height);
+        ctx.fillRect(x - barWidth / 2, startY - height, barWidth, height);
+
+        // Draw label below bar
         ctx.fillStyle = '#333';
-        ctx.fillText(labels[index], x, startY + 20);
-        ctx.fillText(value.toString(), x, startY - height - 10);
+        ctx.strokeText(labels[index], x, startY + 30);
+        ctx.fillText(labels[index], x, startY + 30);
+
+        // Draw value below label with space
+        ctx.strokeText(value.toString(), x, startY + 55);
+        ctx.fillText(value.toString(), x, startY + 55);
     });
 }
 
@@ -245,8 +272,6 @@ document.getElementById('load-instagram-data').addEventListener('click', async (
     button.textContent = 'Load Instagram Data';
     button.disabled = false;
 });
-
-document.getElementById('analytics-btn').addEventListener('click', drawChart);
 
 // Initialize
 updateStats();
